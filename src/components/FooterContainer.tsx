@@ -19,7 +19,7 @@ const FooterContainer = () => {
     return (
         <Container>
             <FooterText>
-                end
+                ---
             </FooterText>
         </Container>
     );

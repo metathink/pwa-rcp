@@ -5,9 +5,9 @@ import FooterContainer from "./components/FooterContainer";
 
 export const AppContainer = styled.div`
     height: 100vh;
-    width: 1200px; /* Fixed width */
-    margin: 5px auto; /* Center the container */
+    margin: 0 auto; /* Center the container */
     padding: 5px;
+    overflow: auto;
 
     /* Optional background styles */
     /* background-color: beige; 
