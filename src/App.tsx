@@ -1,32 +1,29 @@
-import styled from "styled-components";
+import { Layout, Col, Row } from 'antd';
 import AppBar from "./components/AppBar";
 import PostContainer from "./components/PostContainer/PostContainer";
 import FooterContainer from "./components/FooterContainer";
 
-export const AppContainer = styled.div`
-    height: 100vh;
-    margin: 0 auto; /* Center the container */
-    padding: 5px;
-    overflow: auto;
-
-    /* Optional background styles */
-    /* background-color: beige; 
-    background-image: 
-        linear-gradient(45deg, rgba(255, 255, 255, 0.4) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.4) 75%),
-        linear-gradient(45deg, rgba(255, 255, 255, 0.4) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.4) 75%);
-    background-size: 40px 40px; 
-    background-position: 0 0, 20px 20px;  */
-`;
+const { Header, Content, Footer } = Layout;
 
 function App() {
   return (
-    <>
-      <AppContainer>
+    <Layout style={{ minHeight: '100vh' }}>
+      <Header>
         <AppBar />
-        <PostContainer />
-      </AppContainer>
-      <FooterContainer />
-    </>
+      </Header>
+      <Layout>
+        <Content style={{ padding: '0 24px', minHeight: 280 }}>
+          <Row justify="center">
+            <Col xs={24} sm={22} md={18} lg={16} xl={14}>
+              <PostContainer />
+            </Col>
+          </Row>
+        </Content>
+        <Footer style={{ textAlign: 'center' }}>
+          <FooterContainer />
+        </Footer>
+      </Layout>
+    </Layout>
   );
 }
 
