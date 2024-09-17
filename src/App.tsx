@@ -1,5 +1,5 @@
 import React from 'react';
-import { Breadcrumb, Layout, Menu, theme, Input } from 'antd';
+import { Layout, Menu, Input, Card } from 'antd';
 
 const { Search } = Input;
 
@@ -12,19 +12,16 @@ const items = [
 ];
 
 const onSearch = () => {
-  
+
 }
 
 const App: React.FC = () => {
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
 
   return (
     <Layout>
       <Header style={{ display: 'flex', alignItems: 'center' }}>
         <div className="demo-logo" />
-        <Search placeholder="input search text" onSearch={onSearch} style={{ width: 200 }} />
+        <Search placeholder="input search text" onSearch={onSearch} style={{ width: 200, marginRight: "20px" }} />
         <Menu
           theme="dark"
           mode="horizontal"
@@ -33,19 +30,37 @@ const App: React.FC = () => {
           style={{ flex: 1, minWidth: 0 }}
         />
       </Header>
-      <Content style={{ padding: '0 48px' }}>
-        <Breadcrumb style={{ margin: '16px 0' }}>
-        </Breadcrumb>
-        <div
-          style={{
-            background: colorBgContainer,
-            minHeight: 280,
-            padding: 24,
-            borderRadius: borderRadiusLG,
-          }}
-        >
-          Content
-        </div>
+      <Content style={{ padding: '0 20px' }}>
+        <Card title="Card title"
+          bordered={false}
+          style={{ width: "100%", margin: '20px auto' }}>
+          <p>Card content</p>
+        </Card>
+        <Card title="Card title"
+          bordered={false}
+          style={{ width: "100%", margin: '20px auto' }}>
+          <p>Card content</p>
+        </Card>
+        <Card title="Card title"
+          bordered={false}
+          style={{ width: "100%", margin: '20px auto' }}>
+          <p>Card content</p>
+        </Card>
+        <Card title="Card title"
+          bordered={false}
+          style={{ width: "100%", margin: '20px auto' }}>
+          <p>Card content</p>
+        </Card>
+        <Card title="Card title"
+          bordered={false}
+          style={{ width: "100%", margin: '20px auto' }}>
+          <p>Card content</p>
+        </Card>
+        <Card title="Card title"
+          bordered={false}
+          style={{ width: "100%", margin: '20px auto' }}>
+          <p>Card content</p>
+        </Card>
       </Content>
       <Footer style={{ textAlign: 'center' }}>
       </Footer>
