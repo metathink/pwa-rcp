@@ -1,62 +1,177 @@
-import React from 'react';
-import { Layout, Menu, Input, Card } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Layout, Menu, Input, Card, } from 'antd';
+import PostDetail from './components/PostDetail';
+
+import { Post } from './types/types';
+import { getPostAll } from './util/db';
+import { PlusOutlined } from '@ant-design/icons';
+import PostCreate from './components/PostCreate';
 
 const { Search } = Input;
-
 const { Header, Content, Footer } = Layout;
 
-const items = [
+const searchType = [
   { key: '1', label: 'Title' },
   { key: '2', label: 'Tags' },
   { key: '3', label: 'Item' },
-];
-
-const cardTestData = [
-  { title: "title1", content: "content1" },
-  { title: "title2", content: "content2" },
-  { title: "title3", content: "content3" },
-  { title: "title4", content: "content4" },
-  { title: "title5", content: "content5" },
-  { title: "title6", content: "content6" },
-  { title: "title7", content: "content7" },
-  { title: "title8", content: "content8" },
-  { title: "title9", content: "content9" },
-  { title: "title10", content: "content10" },
 ]
 
-const onSearch = () => {
 
+
+const onSearch = (setView: React.Dispatch<React.SetStateAction<string>>) => {
+  setView("list")
 }
+
+const logoClick = (setView: React.Dispatch<React.SetStateAction<string>>) => {
+  setView("list")
+}
+
+const HeaderContainer = ({ setView, searchMode, setSearchMode }: {
+  setView: React.Dispatch<React.SetStateAction<string>>,
+  searchMode: string,
+  setSearchMode: React.Dispatch<React.SetStateAction<string>>
+}) => {
+
+  const onMenuClick = (e: { key: React.SetStateAction<string> }) => {
+    setSearchMode(e.key)
+  }
+
+  const onPlusClick = () => {
+    setView("create")
+  }
+
+  return (
+    <>
+      <Header style={{ display: 'flex', alignItems: 'center', padding: '0 20px', height: '64px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', flex: '1' }}>
+          <img
+            src="logo.png"
+            alt="Logo"
+            style={{ height: '80%', maxHeight: '60px', marginRight: '10px', borderRadius: '10px' }} // 画像の最大高さをヘッダーの高さに合わせる
+            onClick={() => logoClick(setView)}
+          />
+          <Search
+            placeholder="input search text"
+            onSearch={() => onSearch(setView)}
+            style={{ width: 200, marginRight: '20px' }}
+          />
+          <Menu
+            theme="dark"
+            mode="horizontal"
+            defaultSelectedKeys={[searchMode]}
+            items={searchType}
+            style={{ flex: '1', minWidth: 0 }}
+            onClick={onMenuClick}
+          />
+        </div>
+        <PlusOutlined
+          style={{ color: 'white', fontSize: '24px' }}
+          onClick={onPlusClick}
+        />
+      </Header>
+
+    </>
+  )
+}
+
+const PostListView = ({ setView, posts }:
+  { setView: React.Dispatch<React.SetStateAction<string>>, posts: Post[] }) => {
+
+  const onCardClick = () => {
+    console.log("card click")
+    setView("detail")
+  }
+
+  if (posts.length > 0) {
+    return (
+      <>
+        <Content style={{ padding: '10px', margin: "10px" }}>
+          {posts.map((card, index) => (
+            <Card
+              key={index}
+              title={card.title}
+              bordered={false}
+              style={{ width: "100%", margin: '20px auto' }}
+              onClick={() => onCardClick()}
+            >
+              <p>{card.description}</p>
+            </Card>
+          ))}
+        </Content>
+      </>
+    )
+  }
+
+  return (
+    <Content style={{ padding: '10px', margin: "10px", textAlign: "center" }}>
+      no post
+    </Content>
+  )
+}
+
+const PostContainer = ({ view, setView, posts }: {
+  view: string,
+  setView: React.Dispatch<React.SetStateAction<string>>,
+  posts: Post[]
+}) => {
+
+  switch (view) {
+    case "list":
+      return (
+        <Content style={{ padding: '20px', margin: '20px' }}> {/* Adjust the margin as needed */}
+          <PostListView setView={setView} posts={posts} />
+        </Content>
+      )
+    case "detail":
+      return (
+        <PostDetail view={view} />
+      )
+    case "create":
+      return (
+        <PostCreate />
+      )
+  }
+}
+
+const FooterContainer = () => {
+  return (
+    <Footer style={{ textAlign: 'center' }}>
+    </Footer>
+  )
+}
+
 
 const App: React.FC = () => {
 
+  const [view, setView] = useState("list")
+  const [searchMode, setSearchMode] = useState("2")
+  const [posts, setPosts] = useState<Post[]>([])
+
+  const fetchPosts = async () => {
+    try {
+      const allPosts = await getPostAll()
+      setPosts(allPosts)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchPosts()
+  }, [])
+
   return (
     <Layout>
-      <Header style={{ display: 'flex', alignItems: 'center' }}>
-        <div className="demo-logo" />
-        <Search placeholder="input search text" onSearch={onSearch} style={{ width: 200, marginRight: "20px" }} />
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          defaultSelectedKeys={['2']}
-          items={items}
-          style={{ flex: 1, minWidth: 0 }}
-        />
-      </Header>
-      <Content style={{ padding: '0 20px' }}>
-        {cardTestData.map((card, index) => (
-          <Card
-            key={index}
-            title={card.title}
-            bordered={false}
-            style={{ width: "100%", margin: '20px auto' }}
-          >
-            <p>{card.content}</p>
-          </Card>
-        ))}
-      </Content>
-      <Footer style={{ textAlign: 'center' }}>
-      </Footer>
+      <HeaderContainer
+        setView={setView}
+        searchMode={searchMode}
+        setSearchMode={setSearchMode} />
+      <PostContainer
+        view={view}
+        setView={setView}
+        posts={posts}
+      />
+      <FooterContainer />
     </Layout>
   );
 };
