@@ -11,12 +11,14 @@ const FormReferenceUrls = () => (
                             {...restField}
                             name={[name]}
                             noStyle
+                            style={{ flex: 1 }}
                         >
                             <Input placeholder="Enter URL" style={{ marginRight: "8px" }} />
                         </Form.Item>
                         <MinusCircleOutlined
                             onClick={() => remove(name)}
-                            style={{ cursor: 'pointer' }}
+                            style={{ cursor: 'pointer', flex: 1 }}
+
                         />
                     </div>
                 ))}

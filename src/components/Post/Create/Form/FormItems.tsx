@@ -1,20 +1,29 @@
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons"
-import { Button, Form, Input, Select } from "antd"
+import { Button, Form, Input, Select, Space } from "antd"
 
 const FormItems = () => (
     <Form.List name="items">
         {(fields, { add, remove }) => (
             <>
                 {fields.map(({ key, name, ...restField }) => (
-                    <div key={key} style={{ display: 'flex', marginBottom: 8, width: '100%', justifyContent: 'space-between' }} >
+                    <Space key={key}
+                        style={{ display: 'flex', marginBottom: 8 }} align="baseline" >
                         <Form.Item
                             {...restField}
                             label={"Item"}
                             name={[name, 'item']}
                             rules={[{ required: true, message: 'Please input an item!' }]}
-                            style={{ flex: 1 }}
                         >
                             <Input placeholder="Enter Item" />
+                        </Form.Item>
+
+                        <Form.Item
+                            {...restField}
+                            label={"Quantity"}
+                            name={[name, 'quantity']}
+                            rules={[{ required: true, message: 'Please input an quantity!' }]}
+                        >
+                            <Input placeholder="Enter Quantity" />
                         </Form.Item>
 
                         <Form.Item
@@ -32,9 +41,12 @@ const FormItems = () => (
 
                         <MinusCircleOutlined
                             onClick={() => remove(name)}
-                            style={{ cursor: 'pointer' }}
+                            style={{
+                                cursor: 'pointer',
+                                fontSize: 16,
+                            }}
                         />
-                    </div>
+                    </Space>
                 ))}
 
                 <Form.Item>
