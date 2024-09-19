@@ -9,7 +9,7 @@ const FormButtons = ({ form }: { form: FormInstance<any> }) => {
     }
 
     return (
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+        <Form.Item style={{ textAlign: 'center' }}>
             <Space>
                 <Button type="primary" htmlType="submit">
                     Submit

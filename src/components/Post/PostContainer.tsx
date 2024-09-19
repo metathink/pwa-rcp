@@ -9,23 +9,13 @@ const PostContainer = ({ view, setView, posts }: {
     setView: React.Dispatch<React.SetStateAction<string>>,
     posts: Post[]
 }) => {
-
-    switch (view) {
-        case "list":
-            return (
-                <Content style={{ padding: '20px', margin: '20px' }}> {/* Adjust the margin as needed */}
-                    <PostListView setView={setView} posts={posts} />
-                </Content>
-            )
-        case "detail":
-            return (
-                <PostDetail view={view} />
-            )
-        case "create":
-            return (
-                <PostCreate />
-            )
-    }
+    return (
+        <Content style={{ padding: '20px', maxWidth: '800px', width: '100%', margin: '0 auto' }}>
+            {view === "list" && <PostListView setView={setView} posts={posts} />}
+            {view === "detail" && <PostDetail view={view} />}
+            {view === "create" && <PostCreate />}
+        </Content>
+    );
 }
 
 export default PostContainer
