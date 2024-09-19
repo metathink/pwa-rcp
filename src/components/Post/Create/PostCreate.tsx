@@ -8,10 +8,15 @@ import FormDescription from './Form/FormDescription';
 import FormReferenceUrls from './Form/FormReferenceUrls';
 import FormButtons from './Form/FormButtons';
 import { addPost } from '../../../util/db';
+import FormProcedure from './Form/FormProcedure';
 
-const PostCreate = () => {
+const PostCreate = ({ setView }: { setView: React.Dispatch<React.SetStateAction<string>> }) => {
 
-    const [form] = Form.useForm();
+    const [form] = Form.useForm()
+
+    const onReset = () => {
+        form.resetFields()
+    }
 
     const onFinish = (values: Post) => {
         const data = {
@@ -20,10 +25,15 @@ const PostCreate = () => {
             createdAt: new Date(),
             items: values.items,
             referenceUrls: values.referenceUrls,
+            procedure: values.procedure
         }
 
         addPost(data)
         console.log(data)
+        window.location.reload()
+
+        onReset()
+        setView("list")
     }
 
 
@@ -35,6 +45,7 @@ const PostCreate = () => {
                 <FormItems />
                 <FormDescription />
                 <FormReferenceUrls />
+                <FormProcedure />
                 <FormButtons form={form} />
             </Form>
         </Content >

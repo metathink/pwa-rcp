@@ -1,18 +1,19 @@
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons"
-import { Button, Form, Input } from "antd"
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Form, Input } from "antd";
 
-const FormReferenceUrls = () => (
-    <Form.List name="referenceUrls">
+const FormProcedure = () => (
+    <Form.List name="procedure">
         {(fields, { add, remove }) => (
             <>
-                {fields.map(({ key, name, ...restField }) => (
+                {fields.map(({ key, name, ...restField }, index) => (
                     <div key={key} style={{ display: 'flex', marginBottom: 8, width: '100%', justifyContent: 'space-between' }} >
+                        <span style={{ marginRight: 8 }}>{index + 1}.</span>
                         <Form.Item
                             {...restField}
                             name={[name]}
                             noStyle
                         >
-                            <Input placeholder="Enter URL" style={{ marginRight: "8px" }} />
+                            <Input.TextArea rows={4} placeholder="Enter Procedure" style={{ marginRight: "8px" }} />
                         </Form.Item>
                         <MinusCircleOutlined
                             onClick={() => remove(name)}
@@ -28,7 +29,7 @@ const FormReferenceUrls = () => (
                         icon={<PlusOutlined />}
                         style={{ width: '100%', textAlign: "center", marginRight: "8px" }}
                     >
-                        Add Reference URL
+                        Add Procedure
                     </Button>
                 </Form.Item>
             </>
@@ -36,4 +37,4 @@ const FormReferenceUrls = () => (
     </Form.List>
 )
 
-export default FormReferenceUrls
+export default FormProcedure

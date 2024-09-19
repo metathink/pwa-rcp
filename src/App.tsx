@@ -12,6 +12,7 @@ const App: React.FC = () => {
 
   const [view, setView] = useState("list")
   const [posts, setPosts] = useState<Post[]>([])
+  const [detailPost, setDetailPost] = useState<Post | undefined>()
 
   const fetchPosts = async () => {
     try {
@@ -35,6 +36,8 @@ const App: React.FC = () => {
         view={view}
         setView={setView}
         posts={posts}
+        detailPost={detailPost}
+        setDetailPost={setDetailPost}
       />
       <FooterContainer />
     </Layout >

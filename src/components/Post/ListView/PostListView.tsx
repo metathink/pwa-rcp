@@ -2,11 +2,15 @@ import { Card } from "antd"
 import { Content } from "antd/es/layout/layout"
 import { Post } from "../../../types/types"
 
-const PostListView = ({ setView, posts }:
-    { setView: React.Dispatch<React.SetStateAction<string>>, posts: Post[] }) => {
+const PostListView = ({ setView, posts, setDetailPost }:
+    {
+        setView: React.Dispatch<React.SetStateAction<string>>,
+        posts: Post[],
+        setDetailPost: React.Dispatch<React.SetStateAction<Post | undefined>>
+    }) => {
 
-    const onCardClick = () => {
-        console.log("card click")
+    const onCardClick = (card: Post) => {
+        setDetailPost(card)
         setView("detail")
     }
 
@@ -19,8 +23,8 @@ const PostListView = ({ setView, posts }:
                             key={index}
                             title={card.title}
                             bordered={false}
-                            style={{ width: "100%", margin: '20px auto' }}
-                            onClick={() => onCardClick()}
+                            style={{ margin: '20px auto' }}
+                            onClick={() => onCardClick(card)}
                         >
                             <p>{card.description}</p>
                         </Card>

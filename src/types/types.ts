@@ -12,4 +12,5 @@ export interface Post {
     editedAd?: Date
     items?: Item[]
     referenceUrls?: string[]
+    procedure?: string[]
 }
