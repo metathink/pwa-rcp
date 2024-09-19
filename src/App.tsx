@@ -27,7 +27,7 @@ const App: React.FC = () => {
   }, [])
 
   return (
-    <Layout>
+    <Layout style={{ width: "100%" }} >
       <HeaderContainer
         setView={setView} />
       <PostContainer
@@ -36,7 +36,7 @@ const App: React.FC = () => {
         posts={posts}
       />
       <FooterContainer />
-    </Layout>
+    </Layout >
   );
 };
 
