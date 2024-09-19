@@ -28,19 +28,25 @@ const PostCreate = () => {
 
 
     return (
-        <>
-            <Content style={{ padding: '10px', margin: "10px", backgroundColor: "#fff" }} >
-                <Title />
-                <Form form={form} onFinish={onFinish} >
-                    <FormTitle />
-                    <FormItems />
-                    <FormDescription />
-                    <FormReferenceUrls />
-                    <FormButtons form={form} />
-                </Form>
-            </Content >
-
-        </>
+        <Content
+            style={{
+                maxWidth: "800px",       // 最大横幅を設定
+                width: "100%",           // 幅は100%にするが、maxWidthで制限
+                padding: '10px',         // 適切なパディング
+                margin: "10px auto",     // 自動で中央に寄せる
+                backgroundColor: "#fff", // 背景色を設定
+                borderRadius: "8px",     // 見た目を改善するために角を少し丸める
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"  // 軽い影を追加
+            }}
+        ><Title />
+            <Form form={form} onFinish={onFinish} >
+                <FormTitle />
+                <FormItems />
+                <FormDescription />
+                <FormReferenceUrls />
+                <FormButtons form={form} />
+            </Form>
+        </Content >
     )
 }
 

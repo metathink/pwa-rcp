@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Layout, Row } from 'antd';
+import { Layout } from 'antd';
 
 import { Post } from './types/types';
 import { getPostAll } from './util/db';
@@ -28,18 +28,14 @@ const App: React.FC = () => {
 
   return (
     <Layout style={{ width: "100%", minHeight: '100vh' }} >
-      <Row>
-        <Col span={24}>
-          <HeaderContainer
-            setView={setView} />
-          <PostContainer
-            view={view}
-            setView={setView}
-            posts={posts}
-          />
-        </Col>
-      </Row>
 
+      <HeaderContainer
+        setView={setView} />
+      <PostContainer
+        view={view}
+        setView={setView}
+        posts={posts}
+      />
       <FooterContainer />
     </Layout >
   );

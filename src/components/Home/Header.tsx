@@ -34,7 +34,7 @@ const HeaderContainer = ({ setView }: {
                     />
                 </div>
                 <PlusOutlined
-                    style={{ color: 'white', fontSize: '24px' }}
+                    style={{ color: 'white', fontSize: '24px', marginRight: "10px" }}
                     onClick={onPlusClick}
                 />
             </Header>
