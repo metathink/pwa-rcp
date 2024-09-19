@@ -27,7 +27,7 @@ const App: React.FC = () => {
   }, [])
 
   return (
-    <Layout style={{ width: "100%" }} >
+    <Layout style={{ width: "100%", minHeight: '100vh' }} >
       <HeaderContainer
         setView={setView} />
       <PostContainer
