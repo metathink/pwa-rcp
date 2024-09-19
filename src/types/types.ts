@@ -4,11 +4,11 @@ interface Item {
 }
 
 export interface Post {
-    id: number
+    id?: number
     title: string
     description: string
     createdAt: Date
-    editedAt: Date
-    items: Item[]
-    referenceUrl: string[]
+    editedAd?: Date
+    items?: Item[]
+    referenceUrl?: string[]
 }
