@@ -1,23 +1,16 @@
 import { Form } from 'antd';
-
 import { Content } from "antd/es/layout/layout"
 import { Post } from '../../../types/types';
-import { useEffect, useState } from 'react';
 import Title from './Title';
 import FormTitle from './Form/FormTitle';
 import FormItems from './Form/FormItems';
 import FormDescription from './Form/FormDescription';
 import FormReferenceUrls from './Form/FormReferenceUrls';
 import FormButtons from './Form/FormButtons';
+import { addPost } from '../../../util/db';
 
 const PostCreate = () => {
-    const [post, setPost] = useState<Post>({
-        title: "",
-        description: "",
-        createdAt: new Date(),
-        items: [],
-        referenceUrls: [],
-    })
+
     const [form] = Form.useForm();
 
     const onFinish = (values: Post) => {
@@ -28,12 +21,11 @@ const PostCreate = () => {
             items: values.items,
             referenceUrls: values.referenceUrls,
         }
-        setPost(data)
+
+        addPost(data)
+        console.log(data)
     }
 
-    useEffect(() => {
-        console.log(post)
-    }, [post])
 
     return (
         <>
