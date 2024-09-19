@@ -180,32 +180,6 @@ export const getByTitle = async (title: string): Promise<Post[]> => {
     })
 }
 
-export const getByTag = async (tag: string): Promise<Post[]> => {
-    const db = await openDB()
-    const transaction = db.transaction(STORE_NAME, "readonly")
-    const store = transaction.objectStore(STORE_NAME)
-    const index = store.index("tags")
-
-    return new Promise((resolve, reject) => {
-        const results: Post[] = []
-        const request = index.openCursor(IDBKeyRange.only(tag))
-
-        request.onsuccess = (event: Event) => {
-            const cursor = (event.target as IDBRequest).result as IDBCursorWithValue | null
-            if (cursor) {
-                results.push(cursor.value)
-                cursor.continue()
-            } else {
-                resolve(results)
-            }
-        }
-
-        request.onerror = (event: Event) => {
-            reject(`Error searching by tag: ${(event.target as IDBRequest).error}`)
-        }
-    })
-}
-
 export const getByItem = async (itemValue: string): Promise<Post[]> => {
     const db = await openDB()
     const transaction = db.transaction(STORE_NAME, "readonly")

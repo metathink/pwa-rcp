@@ -51,17 +51,9 @@ const HeaderContainer = ({ setView, searchMode, setSearchMode }: {
             onClick={() => logoClick(setView)}
           />
           <Search
-            placeholder="input search text"
+            placeholder="input search title or item"
             onSearch={() => onSearch(setView)}
             style={{ width: 200, marginRight: '20px' }}
-          />
-          <Menu
-            theme="dark"
-            mode="horizontal"
-            defaultSelectedKeys={[searchMode]}
-            items={searchType}
-            style={{ flex: '1', minWidth: 0 }}
-            onClick={onMenuClick}
           />
         </div>
         <PlusOutlined

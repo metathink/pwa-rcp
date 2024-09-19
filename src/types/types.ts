@@ -10,6 +10,5 @@ export interface Post {
     createdAt: Date
     editedAt: Date
     items: Item[]
-    tags: string[]
     referenceUrl: string[]
 }
