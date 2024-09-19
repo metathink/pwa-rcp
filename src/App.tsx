@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Menu, Input, Card, } from 'antd';
+import { Layout, Input, Card, } from 'antd';
 import PostDetail from './components/PostDetail';
 
 import { Post } from './types/types';
@@ -10,13 +10,6 @@ import PostCreate from './components/PostCreate';
 const { Search } = Input;
 const { Header, Content, Footer } = Layout;
 
-const searchType = [
-  { key: '1', label: 'Title' },
-  { key: '2', label: 'Tags' },
-  { key: '3', label: 'Item' },
-]
-
-
 
 const onSearch = (setView: React.Dispatch<React.SetStateAction<string>>) => {
   setView("list")
@@ -26,15 +19,9 @@ const logoClick = (setView: React.Dispatch<React.SetStateAction<string>>) => {
   setView("list")
 }
 
-const HeaderContainer = ({ setView, searchMode, setSearchMode }: {
+const HeaderContainer = ({ setView }: {
   setView: React.Dispatch<React.SetStateAction<string>>,
-  searchMode: string,
-  setSearchMode: React.Dispatch<React.SetStateAction<string>>
 }) => {
-
-  const onMenuClick = (e: { key: React.SetStateAction<string> }) => {
-    setSearchMode(e.key)
-  }
 
   const onPlusClick = () => {
     setView("create")
@@ -136,7 +123,6 @@ const FooterContainer = () => {
 const App: React.FC = () => {
 
   const [view, setView] = useState("list")
-  const [searchMode, setSearchMode] = useState("2")
   const [posts, setPosts] = useState<Post[]>([])
 
   const fetchPosts = async () => {
@@ -155,9 +141,7 @@ const App: React.FC = () => {
   return (
     <Layout>
       <HeaderContainer
-        setView={setView}
-        searchMode={searchMode}
-        setSearchMode={setSearchMode} />
+        setView={setView} />
       <PostContainer
         view={view}
         setView={setView}

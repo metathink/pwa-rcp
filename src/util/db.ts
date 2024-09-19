@@ -205,3 +205,90 @@ export const getByItem = async (itemValue: string): Promise<Post[]> => {
         }
     })
 }
+
+export const searchByTitleOrItem = async (searchValue: string): Promise<Post[]> => {
+    const db = await openDB()
+    const transaction = db.transaction(STORE_NAME, "readonly")
+    const store = transaction.objectStore(STORE_NAME)
+    const titleIndex = store.index("title")
+    const itemIndex = store.index("items")
+
+    return new Promise((resolve, reject) => {
+        const results: Post[] = []
+        let titleSearchCompleted = false
+        let itemSearchCompleted = false
+
+        const checkCompletion = () => {
+            if (titleSearchCompleted && itemSearchCompleted) {
+                resolve(results)
+            }
+        }
+
+        // タイトルで検索
+        const titleRequest = titleIndex.openCursor(IDBKeyRange.only(searchValue))
+        titleRequest.onsuccess = (event: Event) => {
+            const cursor = (event.target as IDBRequest).result as IDBCursorWithValue | null
+            if (cursor) {
+                results.push(cursor.value)
+                cursor.continue()
+            } else {
+                titleSearchCompleted = true
+                checkCompletion()
+            }
+        }
+        titleRequest.onerror = (event: Event) => {
+            reject(`Error searching by title: ${(event.target as IDBRequest).error}`)
+        }
+
+        // アイテムで検索
+        const itemRequest = itemIndex.openCursor(IDBKeyRange.only(searchValue))
+        itemRequest.onsuccess = (event: Event) => {
+            const cursor = (event.target as IDBRequest).result as IDBCursorWithValue | null
+            if (cursor) {
+                // 重複を避けるため、既にタイトル検索結果に含まれているかチェック
+                if (!results.some(post => post.id === cursor.value.id)) {
+                    results.push(cursor.value)
+                }
+                cursor.continue()
+            } else {
+                itemSearchCompleted = true
+                checkCompletion()
+            }
+        }
+        itemRequest.onerror = (event: Event) => {
+            reject(`Error searching by item: ${(event.target as IDBRequest).error}`)
+        }
+    })
+}
+
+export const searchByTitleAndItem = async (title: string, itemValue: string): Promise<Post[]> => {
+    const db = await openDB()
+    const transaction = db.transaction(STORE_NAME, "readonly")
+    const store = transaction.objectStore(STORE_NAME)
+    const titleIndex = store.index("title")
+
+    return new Promise((resolve, reject) => {
+        const results: Post[] = []
+        const request = titleIndex.openCursor(IDBKeyRange.only(title))
+
+        request.onsuccess = async (event: Event) => {
+            const cursor = (event.target as IDBRequest).result as IDBCursorWithValue | null
+            if (cursor) {
+                const post = cursor.value
+
+                // アイテムに指定した値が含まれているか確認
+                if (post.items && post.items.includes(itemValue)) {
+                    results.push(post)
+                }
+
+                cursor.continue()
+            } else {
+                resolve(results)
+            }
+        }
+
+        request.onerror = (event: Event) => {
+            reject(`Error searching by title and item: ${(event.target as IDBRequest).error}`)
+        }
+    })
+}

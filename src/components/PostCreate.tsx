@@ -1,6 +1,6 @@
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Select, Space } from 'antd';
-
-const { Option } = Select;
+import TextArea from 'antd/es/input/TextArea';
 
 const layout = {
     labelCol: { span: 8 },
@@ -15,21 +15,6 @@ import { Content } from "antd/es/layout/layout"
 const PostCreate = () => {
     const [form] = Form.useForm();
 
-    const onGenderChange = (value: string) => {
-        switch (value) {
-            case 'male':
-                form.setFieldsValue({ note: 'Hi, man!' });
-                break;
-            case 'female':
-                form.setFieldsValue({ note: 'Hi, lady!' });
-                break;
-            case 'other':
-                form.setFieldsValue({ note: 'Hi there!' });
-                break;
-            default:
-        }
-    };
-
     const onFinish = (values: any) => {
         console.log(values);
     };
@@ -38,14 +23,10 @@ const PostCreate = () => {
         form.resetFields();
     };
 
-    const onFill = () => {
-        form.setFieldsValue({ note: 'Hello world!', gender: 'male' });
-    };
-
     return (
 
         <Content style={{ padding: '10px', margin: "10px", backgroundColor: "#fff" }}>
-            <p>
+            <p style={{ textAlign: "center" }}>
                 PostCreate
             </p>
             <Form
@@ -55,32 +36,114 @@ const PostCreate = () => {
                 onFinish={onFinish}
                 style={{ maxWidth: 600 }}
             >
-                <Form.Item name="note" label="Note" rules={[{ required: true }]}>
-                    <Input />
-                </Form.Item>
-                <Form.Item name="gender" label="Gender" rules={[{ required: true }]}>
-                    <Select
-                        placeholder="Select a option and change input text above"
-                        onChange={onGenderChange}
-                        allowClear
+                <div style={{ width: "90%" }}>
+                    <Form.Item
+                        name="title"
+                        label="Title"
+                        rules={[{ required: true }]}
+                        style={{ width: '90%' }}
                     >
-                        <Option value="male">male</Option>
-                        <Option value="female">female</Option>
-                        <Option value="other">other</Option>
-                    </Select>
-                </Form.Item>
-                <Form.Item
-                    noStyle
-                    shouldUpdate={(prevValues, currentValues) => prevValues.gender !== currentValues.gender}
-                >
-                    {({ getFieldValue }) =>
-                        getFieldValue('gender') === 'other' ? (
-                            <Form.Item name="customizeGender" label="Customize Gender" rules={[{ required: true }]}>
-                                <Input />
-                            </Form.Item>
-                        ) : null
-                    }
-                </Form.Item>
+                        <Input />
+                    </Form.Item>
+
+                </div>
+
+                <div style={{ width: "90%" }}>
+
+                    {/* Form.List for dynamic items and their group selection */}
+                    <Form.List name="items">
+                        {(fields, { add, remove }) => (
+                            <>
+                                {fields.map((field) => (
+                                    <Space
+                                        key={field.key}
+                                        style={{ display: 'flex', marginBottom: 8, justifyContent: 'center' }}
+                                        align="baseline"
+                                    >
+                                        <Form.Item
+                                            label={"Item"}
+                                            name={[field.name, 'item']}
+                                            rules={[{ required: true, message: 'Please input an item!' }]}
+                                        >
+                                            <Input placeholder="Enter Item" />
+                                        </Form.Item>
+
+                                        <Form.Item
+                                            label={"Group"}
+                                            name={[field.name, 'group']}
+                                            rules={[{ required: true, message: 'Please select a group!' }]}
+                                        >
+                                            <Select placeholder="Select Group" style={{ width: 120 }}>
+                                                <Select.Option value="group1">Group 1</Select.Option>
+                                                <Select.Option value="group2">Group 2</Select.Option>
+                                                <Select.Option value="group3">Group 3</Select.Option>
+                                            </Select>
+                                        </Form.Item>
+
+                                        <MinusCircleOutlined onClick={() => remove(field.name)} />
+                                    </Space>
+                                ))}
+
+                                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                                    <Button
+                                        type="dashed"
+                                        onClick={() => add()}
+                                        icon={<PlusOutlined />}
+                                        style={{ width: '60%' }}
+                                    >
+                                        Add Item
+                                    </Button>
+                                </Form.Item>
+                            </>
+                        )}
+                    </Form.List>
+
+                </div>
+
+                <div style={{ width: "90%" }}>
+                    <Form.Item name="description" label="Description" rules={[{ required: true }]}>
+                        <TextArea rows={4} />
+                    </Form.Item>
+                </div>
+
+
+                <div style={{ width: "90%" }}>
+                    {/* Form.List for dynamic reference URL inputs */}
+                    <Form.List name="referenceUrls">
+                        {(fields, { add, remove }) => (
+                            <>
+                                {fields.map((field) => (
+                                    <Form.Item
+                                        label={"Reference URL"}
+                                        key={field.key}
+                                    // required={index === 0} // Only the first URL is required
+                                    >
+                                        <Space align="baseline">
+                                            <Form.Item
+                                                name={[field.name]}
+                                                noStyle
+                                            >
+                                                <Input placeholder="Enter URL" />
+                                            </Form.Item>
+                                            <MinusCircleOutlined onClick={() => remove(field.name)} />
+                                        </Space>
+                                    </Form.Item>
+                                ))}
+                                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                                    <Button
+                                        type="dashed"
+                                        onClick={() => add()}
+                                        icon={<PlusOutlined />}
+                                        style={{ width: '60%' }}
+                                    >
+                                        Add Reference URL
+                                    </Button>
+                                </Form.Item>
+                            </>
+                        )}
+                    </Form.List>
+                </div>
+
                 <Form.Item {...tailLayout}>
                     <Space>
                         <Button type="primary" htmlType="submit">
@@ -89,13 +152,10 @@ const PostCreate = () => {
                         <Button htmlType="button" onClick={onReset}>
                             Reset
                         </Button>
-                        <Button type="link" htmlType="button" onClick={onFill}>
-                            Fill form
-                        </Button>
                     </Space>
                 </Form.Item>
             </Form>
-        </Content>
+        </Content >
     )
 }
 
