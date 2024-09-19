@@ -1,6 +1,6 @@
 interface Item {
     group: number
-    name: string
+    item: string
 }
 
 export interface Post {
