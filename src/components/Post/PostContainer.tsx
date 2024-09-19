@@ -10,7 +10,7 @@ const PostContainer = ({ view, setView, posts }: {
     posts: Post[]
 }) => {
     return (
-        <Content style={{ padding: '20px', maxWidth: '800px', width: '100%', margin: '0 auto' }}>
+        <Content style={{ padding: '20px', maxWidth: '800px', width: '100%', margin: '0 10px' }}>
             {view === "list" && <PostListView setView={setView} posts={posts} />}
             {view === "detail" && <PostDetail view={view} />}
             {view === "create" && <PostCreate />}
