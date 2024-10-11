@@ -32,10 +32,19 @@ const FormItems = () => (
                             rules={[{ required: true, message: 'Please select a group!' }]}
                             style={{ marginLeft: 16 }}
                         >
-                            <Select placeholder="Select Group" style={{ width: 120 }}>
-                                <Select.Option value="group1">Group 1</Select.Option>
-                                <Select.Option value="group2">Group 2</Select.Option>
-                                <Select.Option value="group3">Group 3</Select.Option>
+                            <Select
+                                placeholder="Select Group"
+                                style={{ width: 120 }}
+                            >
+                                <Select.Option value="①">①</Select.Option>
+                                <Select.Option value="②">②</Select.Option>
+                                <Select.Option value="③">③</Select.Option>
+                                <Select.Option value="④">④</Select.Option>
+                                <Select.Option value="⑤">⑤</Select.Option>
+                                <Select.Option value="⑥">⑥</Select.Option>
+                                <Select.Option value="⑦">⑦</Select.Option>
+                                <Select.Option value="⑧">⑧</Select.Option>
+                                <Select.Option value="⑨">⑨</Select.Option>
                             </Select>
                         </Form.Item>
 

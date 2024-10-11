@@ -4,6 +4,16 @@ const DB_NAME = 'rcpDatabase'
 const DB_VERSION = 1
 const STORE_NAME = 'rcpStore'
 
+export const Schema = {
+    title: "",
+    description: "",
+    items: [],
+    referenceUrls: [],
+    procedure: [],
+    createdAt: "",
+    editedAd: "",
+}
+
 let dbInstance: IDBDatabase | null = null
 
 const openDB = (): Promise<IDBDatabase> => {

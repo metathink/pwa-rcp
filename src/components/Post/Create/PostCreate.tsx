@@ -46,7 +46,7 @@ const PostCreate = ({ setView }: { setView: React.Dispatch<React.SetStateAction<
                 <FormDescription />
                 <FormReferenceUrls />
                 <FormProcedure />
-                <FormButtons form={form} />
+                <FormButtons form={form}/>
             </Form>
         </Content >
     )

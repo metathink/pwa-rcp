@@ -1,7 +1,7 @@
-interface Item {
-    group: number
+export interface Item {
+    group: string
     item: string
-    quantity: number
+    quantity: string
 }
 
 export interface Post {
@@ -9,7 +9,7 @@ export interface Post {
     title: string
     description: string
     createdAt: Date
-    editedAd?: Date
+    editedAt?: Date
     items?: Item[]
     referenceUrls?: string[]
     procedure?: string[]
