@@ -17,7 +17,7 @@ const PostContainer = ({ view, setView, posts, detailPost, setDetailPost }: {
                 setView={setView}
                 posts={posts}
                 setDetailPost={setDetailPost} />}
-            {view === "detail" && <PostDetail detailPost={detailPost} />}
+            {view === "detail" && detailPost && <PostDetail detailPost={detailPost} />}
             {view === "create" && <PostCreate setView={setView} />}
         </Content>
     );
