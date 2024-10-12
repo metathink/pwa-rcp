@@ -9,6 +9,7 @@ import FormReferenceUrls from './Form/FormReferenceUrls';
 import FormButtons from './Form/FormButtons';
 import { addPost } from '../../../util/db';
 import FormProcedure from './Form/FormProcedure';
+import FormThumbnail from './Form/FormThumbnail';
 
 const PostCreate = ({ setView }: { setView: React.Dispatch<React.SetStateAction<string>> }) => {
 
@@ -19,8 +20,11 @@ const PostCreate = ({ setView }: { setView: React.Dispatch<React.SetStateAction<
     }
 
     const onFinish = (values: Post) => {
+
+
         const data = {
             title: values.title,
+            thumbnail: values.thumbnail,
             description: values.description,
             createdAt: new Date(),
             items: values.items,
@@ -42,11 +46,12 @@ const PostCreate = ({ setView }: { setView: React.Dispatch<React.SetStateAction<
             <Title />
             <Form form={form} onFinish={onFinish} >
                 <FormTitle />
-                <FormItems />
+                <FormThumbnail form={form} />
                 <FormDescription />
+                <FormItems />
                 <FormReferenceUrls />
-                <FormProcedure />
-                <FormButtons form={form}/>
+                <FormProcedure form={form} />
+                <FormButtons form={form} />
             </Form>
         </Content >
     )

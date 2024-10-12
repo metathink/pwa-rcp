@@ -1,10 +1,11 @@
-import { Card, Checkbox, List, Popover, Typography } from "antd"
+import { Card, Checkbox, List, Popover, Typography, Image } from "antd"
 import { useState } from "react"
 import { styles } from "./PostDetail"
+import { Procedure } from "../../../types/types"
 
 const PostProcedureList = ({ items, procedures }: {
     items: { group: string, item: string, quantity: string }[] | undefined,
-    procedures: string[] | undefined,
+    procedures: Procedure[] | undefined,
 }) => {
 
     const [groupItem, setGroupItem] = useState<string[]>([])
@@ -19,13 +20,13 @@ const PostProcedureList = ({ items, procedures }: {
         setGroupItem(filteredItems)
     }
 
-    const highlightNumbers = ({ item, useItemColor }: {
-        item: string,
+    const highlightNumbers = ({ str, useItemColor }: {
+        str: string,
         useItemColor: string
     }) => {
         // ①～⑨を探す正規表現
         const regex = /(①|②|③|④|⑤|⑥|⑦|⑧|⑨)/g;
-        const parts = item.split(regex); // 正規表現で文字列を分割
+        const parts = str.split(regex); // 正規表現で文字列を分割
         return parts.map((part, index) =>
             regex.test(part) ? (
                 <Popover
@@ -60,15 +61,25 @@ const PostProcedureList = ({ items, procedures }: {
                     const [checkState, changeCheckState] = useState(false)
                     const useColor = checkState ? "silver" : "black"
                     const useItemColor = checkState ? "silver" : "red"
-
+                    const str = item.procedureStr
+                    const image = item.procedureImage
                     return (
                         <List.Item>
                             <Card style={{ width: "100%", borderColor: useColor, color: useColor, textAlign: "left" }}>
-                                {highlightNumbers({ item, useItemColor })}
+                                {highlightNumbers({ str, useItemColor })}
                                 <Checkbox
                                     checked={checkState}
                                     onChange={() => { changeCheckState(!checkState) }}
                                     style={{ float: "right" }} />
+                                {!checkState &&
+                                    <Image
+                                        width="90%"
+                                        src={image}
+                                        alt="Selected Thumbnail"
+                                        style={{ margin: 10 }}
+                                    />
+
+                                }
                             </Card>
                         </List.Item>
                     )

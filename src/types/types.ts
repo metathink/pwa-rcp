@@ -4,13 +4,19 @@ export interface Item {
     quantity: string
 }
 
+export interface Procedure {
+    procedureImage: string
+    procedureStr: string
+}
+
 export interface Post {
     id?: number
     title: string
+    thumbnail?: string
     description: string
     createdAt: Date
     editedAt?: Date
     items?: Item[]
     referenceUrls?: string[]
-    procedure?: string[]
+    procedure?: Procedure[]
 }

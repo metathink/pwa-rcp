@@ -11,6 +11,7 @@ import PostCreatedAt from "./PostCreatedAt";
 import PostEditedAt from "./PostEditedAt";
 import PostId from "./PostId";
 import PostButtonSpace from "./PostButtonSpace";
+import PostImage from "./PostImage";
 
 export const styles = {
     box: {
@@ -47,6 +48,7 @@ const PostDetail = ({ detailPost }: { detailPost: Post }) => {
         <Content style={styles.content}>
 
             <PostTitle title={detailPost.title} />
+            <PostImage thumbnail={detailPost.thumbnail}/>
             <PostDescription description={detailPost.description} />
             <PostItemList items={detailPost.items} />
             <PostReferenceUrlList urls={detailPost.referenceUrls} />
