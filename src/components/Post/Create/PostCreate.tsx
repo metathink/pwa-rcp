@@ -21,7 +21,6 @@ const PostCreate = ({ setView }: { setView: React.Dispatch<React.SetStateAction<
 
     const onFinish = (values: Post) => {
 
-
         const data = {
             title: values.title,
             thumbnail: values.thumbnail,
