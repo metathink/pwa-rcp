@@ -1,12 +1,30 @@
 import { Image } from "antd"
-const PostImage = ({ thumbnail }: { thumbnail: string | undefined }) => {
+import { useEffect, useState } from "react";
+const PostImage = ({ thumbnail }: { thumbnail: Blob | string | undefined }) => {
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    useEffect(() => {
+        if (thumbnail instanceof Blob) {
+            // Blobの場合はURLに変換
+            const url = URL.createObjectURL(thumbnail);
+            setImageUrl(url);
+
+            // メモリリーク防止のためにクリーンアップ
+            return () => {
+                URL.revokeObjectURL(url);
+            };
+        } else if (typeof thumbnail === 'string') {
+            // stringの場合はそのまま使用
+            setImageUrl(thumbnail);
+        }
+    }, [thumbnail]);
+
     return (
         <>
-            {thumbnail && (
+            {imageUrl && (
                 <>
                     <Image
                         width="90%"
-                        src={thumbnail}
+                        src={imageUrl}
                         alt="Selected Thumbnail"
                         style={{ margin: 10 }}
                     />

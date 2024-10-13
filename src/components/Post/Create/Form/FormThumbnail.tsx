@@ -9,6 +9,10 @@ const FormThumbnail = ({ form }: { form: FormInstance<any> }) => {
         const { status } = info.file;
         if (status === 'done' || status === 'removed') {
             setImageUrl(null); // 画像が削除された場合、URLをリセット
+
+
+            form.setFieldsValue({ thumbnail: null });
+
         } else if (status === 'uploading') {
             return; // アップロード中は何もしない
         } else if (status === 'error') {
@@ -24,7 +28,19 @@ const FormThumbnail = ({ form }: { form: FormInstance<any> }) => {
             if (typeof result === 'string') {
                 setImageUrl(result);
                 // フォームの値としてサムネイルURLを設定
-                form.setFieldsValue({ thumbnail: result });
+                // form.setFieldsValue({ thumbnail: result });
+
+                // Base64からBlobへの変換
+                const byteString = atob(result.split(',')[1]);
+                const mimeString = result.split(',')[0].split(':')[1].split(';')[0];
+                const arrayBuffer = new Uint8Array(byteString.length);
+                for (let i = 0; i < byteString.length; i++) {
+                    arrayBuffer[i] = byteString.charCodeAt(i);
+                }
+                const blob = new Blob([arrayBuffer], { type: mimeString });
+
+                // フォームの値としてサムネイルのBlobを設定
+                form.setFieldsValue({ thumbnail: blob });
             }
         };
         reader.readAsDataURL(file);
@@ -33,6 +49,7 @@ const FormThumbnail = ({ form }: { form: FormInstance<any> }) => {
 
     const handleRemoveImage = () => {
         setImageUrl(null);
+        
         form.setFieldsValue({ thumbnail: null }); // サムネイルを削除
     };
 
