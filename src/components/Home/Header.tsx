@@ -28,7 +28,7 @@ const HeaderContainer = ({ setView }: {
                         onClick={() => logoClick(setView)}
                     />
                     <Input.Search
-                        placeholder="input search title or item"
+                        placeholder="search title or item"
                         onSearch={() => onSearch(setView)}
                         style={{ width: 200, marginRight: '20px' }}
                     />
