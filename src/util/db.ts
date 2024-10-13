@@ -111,11 +111,14 @@ export const getPost = async (id: number): Promise<Post | undefined> => {
 
 
 export const updatePost = async (post: Post): Promise<void> => {
+
     const db = await openDB()
     const transaction = db.transaction(STORE_NAME, "readwrite")
     const store = transaction.objectStore(STORE_NAME)
 
     return new Promise((resolve, reject) => {
+        //put メソッドは、id が存在する場合はデータを上書きし、存在しない場合は新規にレコードを作成します。
+        //既存のレコードを更新するためには id がキーです。
         const request = store.put(post)
 
         request.onsuccess = () => {

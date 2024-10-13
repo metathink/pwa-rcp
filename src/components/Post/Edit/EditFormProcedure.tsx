@@ -1,10 +1,25 @@
 import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons"
 import { Button, Form, Input, Upload } from "antd"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { Procedure } from "../../../types/types"
 
+const EditFormProcedure = ({ form, procedure }: {
+    form: any,
+    procedure: Procedure[] | undefined
+}) => {
+    const [imageUrls, setImageUrls] = useState<{ [key: number]: string }>({})
 
-const FormProcedure = ({ form }: { form: any }) => {
-    const [imageUrls, setImageUrls] = useState<{ [key: number]: string }>({});
+    useEffect(() => {
+        if (procedure && procedure.length > 0) {
+            const initialImageUrls: { [key: number]: string } = {};
+            procedure.forEach((p, index) => {
+                if (p.procedureImage) {
+                    initialImageUrls[index] = p.procedureImage;
+                }
+            });
+            setImageUrls(initialImageUrls);
+        }
+    }, [procedure]);
 
     const handleImageUpload = (file: File, fieldIndex: number) => {
         const reader = new FileReader()
@@ -87,40 +102,4 @@ const FormProcedure = ({ form }: { form: any }) => {
     )
 }
 
-export default FormProcedure
-
-// const FormProcedure = () => (
-//     <Form.List name="procedureStr">
-//         {(fields, { add, remove }) => (
-//             <>
-//                 {fields.map(({ key, name, ...restField }, index) => (
-//                     <div key={key} style={{ display: 'flex', marginBottom: 8, width: '100%', justifyContent: 'space-between' }} >
-//                         <span style={{ marginRight: 8 }}>{index + 1}.</span>
-//                         <Form.Item
-//                             {...restField}
-//                             name={[name]}
-//                             noStyle
-//                         >
-//                             <Input.TextArea rows={4} placeholder="Enter Procedure" style={{ marginRight: "8px" }} />
-//                         </Form.Item>
-//                         <MinusCircleOutlined
-//                             onClick={() => remove(name)}
-//                             style={{ cursor: 'pointer' }}
-
-//                         />
-//                     </div>
-//                 ))}
-//                 <Form.Item>
-//                     <Button
-//                         type="dashed"
-//                         onClick={() => add()}
-//                         icon={<PlusOutlined />}
-//                         style={{ width: '100%', textAlign: "center", marginRight: "8px" }}
-//                     >
-//                         Add Procedure
-//                     </Button>
-//                 </Form.Item>
-//             </>
-//         )}
-//     </Form.List>
-// )
+export default EditFormProcedure

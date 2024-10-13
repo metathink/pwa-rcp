@@ -1,7 +1,6 @@
 import { Content } from "antd/es/layout/layout";
 import { Post } from "../../../types/types";
-import { deletePost } from "../../../util/db";
-import { CSSProperties } from "react";
+import { CSSProperties, useState } from "react";
 import PostTitle from "./PostTitle";
 import PostDescription from "./PostDescription";
 import PostItemList from "./PostItemList";
@@ -12,6 +11,7 @@ import PostEditedAt from "./PostEditedAt";
 import PostId from "./PostId";
 import PostButtonSpace from "./PostButtonSpace";
 import PostImage from "./PostImage";
+import EditPost from "../Edit/EditPost";
 
 export const styles = {
     box: {
@@ -35,29 +35,29 @@ export const styles = {
 
 const PostDetail = ({ detailPost }: { detailPost: Post }) => {
 
-    const onDelete = () => {
-        console.log("delete click")
-
-        if (detailPost && detailPost.id) {
-            deletePost(detailPost.id)
-            window.location.reload()
-        }
-    }
+    const [mode, setMode] = useState(true)
 
     return (
         <Content style={styles.content}>
+            {
+                mode ?
+                    <>
+                        <PostTitle title={detailPost.title} />
+                        <PostImage thumbnail={detailPost.thumbnail} />
+                        <PostDescription description={detailPost.description} />
+                        <PostItemList items={detailPost.items} />
+                        <PostReferenceUrlList urls={detailPost.referenceUrls} />
+                        <PostProcedureList items={detailPost.items} procedures={detailPost.procedure} />
+                        <PostCreatedAt createdAt={detailPost.createdAt} />
+                        <PostEditedAt editedAt={detailPost.editedAt} />
+                        <PostId id={detailPost.id} />
 
-            <PostTitle title={detailPost.title} />
-            <PostImage thumbnail={detailPost.thumbnail}/>
-            <PostDescription description={detailPost.description} />
-            <PostItemList items={detailPost.items} />
-            <PostReferenceUrlList urls={detailPost.referenceUrls} />
-            <PostProcedureList items={detailPost.items} procedures={detailPost.procedure} />
-            <PostCreatedAt createdAt={detailPost.createdAt} />
-            <PostEditedAt editedAt={detailPost.editedAt} />
-            <PostId id={detailPost.id} />
-
-            <PostButtonSpace onDelete={onDelete} />
+                        <PostButtonSpace setMode={setMode} id={detailPost.id} />
+                    </> :
+                    <>
+                        <EditPost detailPost={detailPost} />
+                    </>
+            }
 
         </Content>
     );

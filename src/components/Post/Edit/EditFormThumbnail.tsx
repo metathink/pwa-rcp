@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { Button, Form, FormInstance, Image, Upload, UploadFile, message } from 'antd';
 import { UploadOutlined, CloseOutlined } from '@ant-design/icons';
 
-const FormThumbnail = ({ form }: { form: FormInstance<any> }) => {
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
+const EditFormThumbnail = ({ form, thumbnail }: {
+    form: FormInstance<any>,
+    thumbnail: string | undefined
+}) => {
+    const [imageUrl, setImageUrl] = useState<string | null>(thumbnail || null);
 
     const handleChange = (info: { file: UploadFile; fileList: UploadFile[] }) => {
         const { status } = info.file;
@@ -74,7 +77,7 @@ const FormThumbnail = ({ form }: { form: FormInstance<any> }) => {
                 )}
             </div>
         </Form.Item>
-    )
+    );
 }
 
-export default FormThumbnail
+export default EditFormThumbnail

@@ -71,7 +71,7 @@ const PostProcedureList = ({ items, procedures }: {
                                     checked={checkState}
                                     onChange={() => { changeCheckState(!checkState) }}
                                     style={{ float: "right" }} />
-                                {!checkState &&
+                                {!checkState && image &&
                                     <Image
                                         width="90%"
                                         src={image}
