@@ -1,7 +1,29 @@
-import { Image } from "antd"
+// import { Image } from "antd"
+// const PostImage = ({ thumbnail }: { thumbnail: string | undefined }) => {
+//     return (
+//         <>
+//             {thumbnail && (
+//                 <>
+//                     <Image
+//                         width="90%"
+//                         src={thumbnail}
+//                         alt="Selected Thumbnail"
+//                         style={{ margin: 10 }}
+//                     />
+//                 </>
+//             )}
+//         </>
+//     )
+// }
+
+// export default PostImage
+
 import { useEffect, useState } from "react";
+import { Image } from "antd";
+
 const PostImage = ({ thumbnail }: { thumbnail: Blob | string | undefined }) => {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
+
     useEffect(() => {
         if (thumbnail instanceof Blob) {
             // Blobの場合はURLに変換
@@ -21,18 +43,15 @@ const PostImage = ({ thumbnail }: { thumbnail: Blob | string | undefined }) => {
     return (
         <>
             {imageUrl && (
-                <>
-                    <Image
-                        width="90%"
-                        src={imageUrl}
-                        alt="Selected Thumbnail"
-                        style={{ margin: 10 }}
-                    />
-                </>
+                <Image
+                    width="90%"
+                    src={imageUrl}
+                    alt="Selected Thumbnail"
+                    style={{ margin: 10 }}
+                />
             )}
         </>
-    )
-}
+    );
+};
 
-export default PostImage
-
+export default PostImage;
