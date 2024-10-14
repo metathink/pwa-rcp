@@ -6,53 +6,74 @@ import { useState } from "react"
 const FormProcedure = ({ form }: { form: any }) => {
     const [imageUrls, setImageUrls] = useState<{ [key: number]: string }>({});
 
-    const handleImageUpload = (file: File, fieldIndex: number) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const { result } = e.target as FileReader;
-            if (typeof result === 'string') {
-                const img = new Image();
-                img.src = result;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const maxWidth = 800;
-                    const maxHeight = 800;
-                    let {width, height} = img;
+    const handleImageUpload = async (file: File, fieldIndex: number) => {
+        const base64 = await readFileAsDataURL(file);
+        const compressedImage = await resizeImage(base64, 800, 800);
 
-                    // Maintain aspect ratio while resizing
-                    if (width > height) {
-                                            if (width > maxWidth) {
-                                                height *= maxWidth / width;
-                                                width = maxWidth;
-                                            }
-                                        }
-                    else if (height > maxHeight) {
-                                                width *= maxHeight / height;
-                                                height = maxHeight;
-                                            }
+        setImageUrls((prev: any) => ({ ...prev, [fieldIndex]: compressedImage }));
 
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    if (ctx) {
-                        ctx.drawImage(img, 0, 0, width, height);
-                        const compressedImage = canvas.toDataURL('image/jpeg'); // You can change the format if needed
-                        setImageUrls((prev: any) => ({ ...prev, [fieldIndex]: compressedImage }));
+        // Update the form with the resized image
+        form.setFieldsValue({
+            procedure: form.getFieldValue('procedure').map((p: any, i: number) =>
+                i === fieldIndex ? { ...p, procedureImage: compressedImage } : p
+            )
+        });
 
-                        // Update the form with the resized image
-                        form.setFieldsValue({
-                            procedure: form.getFieldValue('procedure').map((p: any, i: number) =>
-                                i === fieldIndex ? { ...p, procedureImage: compressedImage } : p
-                            )
-                        });
-                    }
-                };
-            }
-        };
-        reader.readAsDataURL(file);
         return false; // Prevent default upload behavior
     };
 
+    // FileReader を使ってファイルを DataURL に変換する非同期関数
+    const readFileAsDataURL = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const { result } = e.target as FileReader;
+                if (typeof result === 'string') {
+                    resolve(result);
+                } else {
+                    reject(new Error('Failed to read file as data URL'));
+                }
+            };
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+        });
+    };
+
+    // 画像をリサイズする非同期関数
+    const resizeImage = (base64: string, maxWidth: number, maxHeight: number): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = base64;
+            img.onload = () => {
+                let { width, height } = img;
+
+                // Maintain aspect ratio while resizing
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                }
+                else if (height > maxHeight) {
+                    width *= maxHeight / height;
+                    height = maxHeight;
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const compressedImage = canvas.toDataURL('image/jpeg'); // You can change the format if needed
+                    resolve(compressedImage);
+                } else {
+                    reject(new Error('Failed to get canvas context'));
+                }
+            };
+            img.onerror = (error) => reject(error);
+        });
+    };
 
     const removeImage = (fieldIndex: number) => {
         setImageUrls((prev: any) => ({ ...prev, [fieldIndex]: '' }));
