@@ -13,8 +13,7 @@ import EditFormProcedure from "./EditFormProcedure"
 
 const EditPost = ({ detailPost }: { detailPost: Post }) => {
     const [form] = Form.useForm()
-    console.log(detailPost)
-
+    
     const onFinish = (values: Post) => {
         const data = {
             id: detailPost.id,
