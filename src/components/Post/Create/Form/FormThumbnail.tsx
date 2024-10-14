@@ -80,7 +80,7 @@
 // export default FormThumbnail
 
 import { useState } from 'react';
-import { Button, Form, FormInstance, Image, Upload, UploadFile, message } from 'antd';
+import { Button, Form, FormInstance, Upload, UploadFile, message } from 'antd';
 import { UploadOutlined, CloseOutlined } from '@ant-design/icons';
 
 const FormThumbnail = ({ form }: { form: FormInstance<any> }) => {
@@ -102,13 +102,13 @@ const FormThumbnail = ({ form }: { form: FormInstance<any> }) => {
         reader.onload = async (e) => {
             const { result } = e.target as FileReader;
             if (typeof result === 'string') {
-                setImageUrl(result);
-                // フォームの値としてサムネイルURLを設定
-                form.setFieldsValue({ thumbnail: result });
+                // 画像を圧縮するときにBase64データを渡す
+                const compressedImage = await compressImage(result, 800, 800); // 引数を指定
+                setImageUrl(compressedImage);
 
-                // Blobに変換してIndexedDBに保存
-                const byteString = atob(result.split(',')[1]);
-                const mimeString = result.split(',')[0].split(':')[1].split(';')[0];
+                // 圧縮されたBase64画像をBlobに変換してIndexedDBに保存
+                const byteString = atob(compressedImage.split(',')[1]);
+                const mimeString = compressedImage.split(',')[0].split(':')[1].split(';')[0];
                 const arrayBuffer = new ArrayBuffer(byteString.length);
                 const intArray = new Uint8Array(arrayBuffer);
 
@@ -117,12 +117,56 @@ const FormThumbnail = ({ form }: { form: FormInstance<any> }) => {
                 }
 
                 const blob = new Blob([intArray], { type: mimeString });
-                form.setFieldsValue({ thumbnail: blob }) // IndexedDBに保存
+
+                // フォームの値としてサムネイルBlobを設定
+                form.setFieldsValue({ thumbnail: blob }); // IndexedDBに保存するためにBlobを設定
             }
         };
         reader.readAsDataURL(file);
         return false; // 自動アップロードを防ぐ
     };
+
+
+    const compressImage = (base64Str: string, maxWidth = 800, maxHeight = 800) => {
+        return new Promise<string>((resolve, reject) => {
+            const img = new Image();
+            
+            // ロードエラーが発生した場合の処理
+            img.onerror = () => {
+                reject(new Error('Failed to load the image.'));
+            };
+    
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d')!;
+    
+                // 画像の比率を保ちながら最大サイズを調整
+                let { width, height } = img;
+    
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = Math.floor((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+                } else if (height > maxHeight) {
+                    width = Math.floor((width * maxHeight) / height);
+                    height = maxHeight;
+                }
+    
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+    
+                // 圧縮されたBase64画像を取得
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7); // 圧縮率70%でJPEGとして出力
+                resolve(compressedBase64);
+            };
+    
+            img.src = base64Str; // onloadイベント後にsrcを設定
+        });
+    };
+    
+
 
     const handleRemoveImage = () => {
         setImageUrl(null);
@@ -146,7 +190,7 @@ const FormThumbnail = ({ form }: { form: FormInstance<any> }) => {
 
                 {imageUrl && (
                     <div style={{ position: 'relative', display: 'inline-block' }}>
-                        <Image
+                        <img
                             width="90%"
                             src={imageUrl}
                             alt="Selected Thumbnail"
