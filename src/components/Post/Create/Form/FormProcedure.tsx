@@ -1,88 +1,96 @@
-import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons"
-import { Button, Form, Input, Upload } from "antd"
-import { useState } from "react"
-
+import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { Button, Form, Input, message, Upload } from "antd";
+import { useState } from "react";
+import { UploadFile } from "antd/es/upload/interface";
 
 const FormProcedure = ({ form }: { form: any }) => {
-    const [imageUrls, setImageUrls] = useState<{ [key: number]: string }>({});
+    const [imageUrls, setImageUrls] = useState<{ [key: number]: string | null }>({});
 
-    const handleImageUpload = async (file: File, fieldIndex: number) => {
-        const base64 = await readFileAsDataURL(file);
-        const compressedImage = await resizeImage(base64, 800, 800);
+    const handleChange = (info: { file: UploadFile, fileList: UploadFile[] }, index: number) => {
+        const { status } = info.file;
 
-        setImageUrls((prev: any) => ({ ...prev, [fieldIndex]: compressedImage }));
-
-        // Update the form with the resized image
-        form.setFieldsValue({
-            procedure: form.getFieldValue('procedure').map((p: any, i: number) =>
-                i === fieldIndex ? { ...p, procedureImage: compressedImage } : p
-            )
-        });
-
-        return false; // Prevent default upload behavior
+        if (status === "done" || status === "removed") {
+            if (status === "removed") {
+                setImageUrls((prev) => ({ ...prev, [index]: null }));
+                form.setFieldsValue({
+                    procedure: form.getFieldValue('procedure').map((p: any, i: number) =>
+                        i === index ? { ...p, procedureImage: '' } : p
+                    )
+                });
+            }
+        } else if (status === 'uploading') {
+            return;
+        } else if (status === 'error') {
+            message.error('Image upload failed.');
+        }
     };
 
-    // FileReader を使ってファイルを DataURL に変換する非同期関数
-    const readFileAsDataURL = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const { result } = e.target as FileReader;
-                if (typeof result === 'string') {
-                    resolve(result);
-                } else {
-                    reject(new Error('Failed to read file as data URL'));
+    const beforeUpload = (file: File, index: number) => {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const { result } = e.target as FileReader;
+
+            if (typeof result === "string") {
+                const compressedImage = await compressImage(result, 800, 800);
+                setImageUrls(prev => ({ ...prev, [index]: compressedImage }));
+
+                const byteString = atob(compressedImage.split(",")[1]);
+                const mimeString = compressedImage.split(',')[0].split(':')[1].split(';')[0];
+                const arrayBuffer = new ArrayBuffer(byteString.length);
+                const intArray = new Uint8Array(arrayBuffer);
+
+                for (let i = 0; i < byteString.length; i++) {
+                    intArray[i] = byteString.charCodeAt(i);
                 }
-            };
-            reader.onerror = (error) => reject(error);
-            reader.readAsDataURL(file);
-        });
+
+                const blob = new Blob([intArray], { type: mimeString });
+                form.setFieldsValue({
+                    procedure: form.getFieldValue('procedure').map((p: any, i: number) =>
+                        i === index ? { ...p, procedureImage: blob } : p
+                    )
+                });
+            }
+        };
+        reader.readAsDataURL(file);
+        return false;
     };
 
-    // 画像をリサイズする非同期関数
-    const resizeImage = (base64: string, maxWidth: number, maxHeight: number): Promise<string> => {
-        return new Promise((resolve, reject) => {
+    const compressImage = (base64Str: string, maxWidth: number, maxHeight: number): Promise<string> => {
+        return new Promise<string>((resolve, reject) => {
             const img = new Image();
-            img.src = base64;
+            img.onerror = () => reject(new Error('Failed to load the image.'));
             img.onload = () => {
-                let { width, height } = img;
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
 
-                // Maintain aspect ratio while resizing
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height *= maxWidth / width;
-                        width = maxWidth;
-                    }
-                }
-                else if (height > maxHeight) {
-                    width *= maxHeight / height;
+                let { width, height } = img;
+                if (width > maxWidth) {
+                    height = Math.floor((height * maxWidth) / width);
+                    width = maxWidth;
+                } else if (height > maxHeight) {
+                    width = Math.floor((width * maxHeight) / height);
                     height = maxHeight;
                 }
 
-                const canvas = document.createElement('canvas');
                 canvas.width = width;
                 canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                if (ctx) {
-                    ctx.drawImage(img, 0, 0, width, height);
-                    const compressedImage = canvas.toDataURL('image/jpeg'); // You can change the format if needed
-                    resolve(compressedImage);
-                } else {
-                    reject(new Error('Failed to get canvas context'));
-                }
+                ctx?.drawImage(img, 0, 0, width, height);
+
+                const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+                resolve(compressedBase64);
             };
-            img.onerror = (error) => reject(error);
+            img.src = base64Str;
         });
     };
 
-    const removeImage = (fieldIndex: number) => {
+    const handleRemoveImage = (fieldIndex: number) => {
         setImageUrls((prev: any) => ({ ...prev, [fieldIndex]: '' }));
         form.setFieldsValue({
             procedure: form.getFieldValue('procedure').map((p: any, i: number) => (
                 i === fieldIndex ? { ...p, procedureImage: '' } : p
             ))
-        })
-    }
+        });
+    };
 
     return (
         <Form.List name="procedure">
@@ -108,14 +116,15 @@ const FormProcedure = ({ form }: { form: any }) => {
                                     <Upload
                                         accept="image/*"
                                         showUploadList={false}
-                                        beforeUpload={(file) => handleImageUpload(file, index)}
+                                        onChange={(info) => handleChange(info, index)}
+                                        beforeUpload={(file) => beforeUpload(file, index)}
                                     >
                                         <Button icon={<UploadOutlined />}>Image</Button>
                                     </Upload>
                                     {imageUrls[index] && (
                                         <div style={{ position: 'relative', display: 'inline-block', marginLeft: '10px' }}>
                                             <img src={imageUrls[index]} alt="Procedure" style={{ width: '100px', height: 'auto' }} />
-                                            <Button type="text" style={{ color: 'red' }} onClick={() => removeImage(index)}>Remove</Button>
+                                            <Button type="text" style={{ color: 'red' }} onClick={() => handleRemoveImage(index)}>Remove</Button>
                                         </div>
                                     )}
                                 </div>
@@ -135,8 +144,7 @@ const FormProcedure = ({ form }: { form: any }) => {
                 </>
             )}
         </Form.List>
-    )
-}
+    );
+};
 
-export default FormProcedure
-
+export default FormProcedure;

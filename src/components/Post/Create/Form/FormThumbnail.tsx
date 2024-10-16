@@ -47,7 +47,7 @@ const FormThumbnail = ({ form }: { form: FormInstance<any> }) => {
     };
 
 
-    const compressImage = (base64Str: string, maxWidth = 800, maxHeight = 800) => {
+    const compressImage = (base64Str: string, maxWidth: number, maxHeight: number) => {
         return new Promise<string>((resolve, reject) => {
             const img = new Image();
 

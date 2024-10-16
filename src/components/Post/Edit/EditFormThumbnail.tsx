@@ -1,12 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Form, FormInstance, Image, Upload, UploadFile, message } from 'antd';
 import { UploadOutlined, CloseOutlined } from '@ant-design/icons';
 
 const EditFormThumbnail = ({ form, thumbnail }: {
     form: FormInstance<any>,
-    thumbnail: string | undefined
+    thumbnail: Blob | undefined | null
 }) => {
-    const [imageUrl, setImageUrl] = useState<string | null>(thumbnail || null);
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (thumbnail) {
+            const url = URL.createObjectURL(thumbnail);
+            setImageUrl(url);
+            return () => URL.revokeObjectURL(url); // メモリリークを防ぐためのクリーンアップ
+        }
+    }, [thumbnail]);
 
     const handleChange = (info: { file: UploadFile; fileList: UploadFile[] }) => {
         const { status } = info.file;
@@ -26,8 +34,19 @@ const EditFormThumbnail = ({ form, thumbnail }: {
             const { result } = e.target as FileReader;
             if (typeof result === 'string') {
                 setImageUrl(result);
+
+                // データURIをBlobに変換
+                const byteString = atob(result.split(',')[1]);
+                const mimeString = result.split(',')[0].split(':')[1].split(';')[0];
+                const ab = new ArrayBuffer(byteString.length);
+                const ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+                const blob = new Blob([ab], { type: mimeString });
+
                 // フォームの値としてサムネイルURLを設定
-                form.setFieldsValue({ thumbnail: result });
+                form.setFieldsValue({ thumbnail: blob });
             }
         };
         reader.readAsDataURL(file);

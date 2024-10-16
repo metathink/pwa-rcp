@@ -13,7 +13,7 @@ import FormThumbnail from './Form/FormThumbnail';
 
 const PostCreate = ({ setView }: { setView: React.Dispatch<React.SetStateAction<string>> }) => {
 
-    const [form] = Form.useForm()
+    const [form] = Form.useForm<Post>()
 
     const onReset = () => {
         form.resetFields()

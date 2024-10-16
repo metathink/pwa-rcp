@@ -12,7 +12,7 @@ export interface Procedure {
 export interface Post {
     id?: number
     title: string
-    thumbnail?: string
+    thumbnail?: Blob | null
     description: string
     createdAt: Date
     editedAt?: Date
